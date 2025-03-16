@@ -9,7 +9,7 @@
         VALUES (#{email}, #{salt});
     </insert>
 
-    <select id="getSaltByEmail" parameterType="String" resultType="com.blog.velog.dto.Member">
+    <select id="getSaltByEmail" parameterType="String" resultType="String">
         SELECT salt FROM salt_info WHERE email = #{email};
     </select>
 
