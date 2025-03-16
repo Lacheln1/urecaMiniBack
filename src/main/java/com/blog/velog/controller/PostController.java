@@ -29,6 +29,7 @@ public class PostController {
 			Object o = storage.get("fistPagePosts");
 			if(o==null) {
 				List<Post> list = postService.getAllPosts();
+				
 				storage.put("fistPagePosts", list);
 				return list;
 			}

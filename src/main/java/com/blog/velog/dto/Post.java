@@ -3,31 +3,9 @@ package com.blog.velog.dto;
 import java.util.Date;
 
 public class Post {
-	private String title,content,tags,imageUrl;
-	private long authorId,id; //sql에서 bigInt타입으로 선언돼서 long타입
+	private String title,content,username,tags,imageUrl;
+	private long id; //sql에서 bigInt타입으로 선언돼서 long타입
 	private int likes;
-	private Date createdAt;
-	public Post() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-	public Post(String title, String content, String tags, String imageUrl, long authorId, long id, int likes,
-			Date createdAt) {
-		super();
-		this.title = title;
-		this.content = content;
-		this.tags = tags;
-		this.imageUrl = imageUrl;
-		this.authorId = authorId;
-		this.id = id;
-		this.likes = likes;
-		this.createdAt = createdAt;
-	}
-	@Override
-	public String toString() {
-		return "Post [title=" + title + ", content=" + content + ", tags=" + tags + ", imageUrl=" + imageUrl
-				+ ", authorId=" + authorId + ", id=" + id + ", likes=" + likes + ", createdAt=" + createdAt + "]";
-	}
 	public String getTitle() {
 		return title;
 	}
@@ -40,6 +18,12 @@ public class Post {
 	public void setContent(String content) {
 		this.content = content;
 	}
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
 	public String getTags() {
 		return tags;
 	}
@@ -51,12 +35,6 @@ public class Post {
 	}
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
-	}
-	public long getAuthorId() {
-		return authorId;
-	}
-	public void setAuthorId(long authorId) {
-		this.authorId = authorId;
 	}
 	public long getId() {
 		return id;
@@ -75,6 +53,28 @@ public class Post {
 	}
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
+	}
+	@Override
+	public String toString() {
+		return "Post [title=" + title + ", content=" + content + ", username=" + username + ", tags=" + tags
+				+ ", imageUrl=" + imageUrl + ", id=" + id + ", likes=" + likes + ", createdAt=" + createdAt + "]";
+	}
+	public Post(String title, String content, String username, String tags, String imageUrl, long id, int likes,
+			Date createdAt) {
+		super();
+		this.title = title;
+		this.content = content;
+		this.username = username;
+		this.tags = tags;
+		this.imageUrl = imageUrl;
+		this.id = id;
+		this.likes = likes;
+		this.createdAt = createdAt;
+	}
+	private Date createdAt;
+	public Post() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 	
 	
