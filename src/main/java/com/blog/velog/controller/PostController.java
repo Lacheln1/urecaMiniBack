@@ -1,7 +1,12 @@
 package com.blog.velog.controller;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +20,26 @@ public class PostController {
 	
 	@Autowired
 	PostService postService;
+	
+	Map<String,Object> storage = new HashMap();
+	
+	@GetMapping("getAllPosts")
+	public List<Post> getAllPosts(){
+		try {
+			Object o = storage.get("fistPagePosts");
+			if(o==null) {
+				List<Post> list = postService.getAllPosts();
+				storage.put("fistPagePosts", list);
+				return list;
+			}
+			return (List<Post>) o;
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	
 	@PostMapping("insertPost")
 	public String insertPost(@RequestBody Post p) {
