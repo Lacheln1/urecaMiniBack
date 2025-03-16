@@ -17,4 +17,6 @@ public interface PostDao {
 	void updatePost(Post post) throws Exception;
 	
 	void deletePost(@Param("id") Long id) throws Exception;
+	
+	Post getPostDetail(@Param("id") Long id) throws Exception;
 }

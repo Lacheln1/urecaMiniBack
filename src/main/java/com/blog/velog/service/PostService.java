@@ -17,6 +17,10 @@ public class PostService {
 		return postDao.getAllPosts();
 	}
 	
+	 public Post getPostDetail(Long id) throws Exception {
+	        return postDao.getPostDetail(id);
+	    }
+	
 	public void insertPost(Post p) throws Exception{
 		postDao.insertPost(p);
 	}

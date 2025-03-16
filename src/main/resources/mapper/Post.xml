@@ -9,6 +9,10 @@
     select * from post
   </select>
   
+  <select id="getPostDetail" parameterType="Long"  >
+    SELECT * FROM post WHERE id = #{id}
+  </select>
+  
   <insert id="insertPost" parameterType="Post">
   	insert into post(title,content,username,tags,image_url) values(#{title}, #{content}, #{username},#{tags},#{imageUrl})
   </insert>
@@ -20,4 +24,6 @@
   <delete id="deletePost" parameterType="Long">
   	 delete from post where id = #{id}
   </delete>
+  
+  
 </mapper>
