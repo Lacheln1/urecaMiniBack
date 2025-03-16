@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.blog.velog.dao.LoginDao">
+
+    <!-- 🔹 로그인 성공 시 기록 저장 -->
+    <insert id="insertLoginInfo">
+        INSERT INTO login (email, pwd, token, login_status, first_login)
+        VALUES (#{email}, #{pwd}, #{token}, #{status}, NOW());
+    </insert>
+
+    <!-- 🔹 특정 이메일의 로그인 정보 조회 -->
+    <select id="getLoginInfoByEmail" parameterType="String" resultType="com.blog.velog.dto.Login">
+        SELECT * FROM login WHERE email = #{email}
+    </select>
+
+    <!-- 🔹 로그아웃 시 로그인 기록 삭제 -->
+    <delete id="deleteLoginInfo">
+        DELETE FROM login WHERE email = #{email}
+    </delete>
+
+</mapper>
