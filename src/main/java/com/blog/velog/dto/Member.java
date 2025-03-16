@@ -9,8 +9,8 @@ public class Member {
     
     private Long id; // Auto Increment Primary Key
 
-    @NotBlank(message = "아이디(username)는 필수 입력값입니다.")
-    @Size(max = 50, message = "아이디(username)는 50자 이하로 입력해주세요.")
+    @NotBlank(message = "닉네임은 필수 입력값입니다.")
+    @Size(max = 50, message = "닉네임은 50자 이하로 입력해주세요.")
     private String username;
 
     @NotBlank(message = "이름(name)은 필수 입력값입니다.")
