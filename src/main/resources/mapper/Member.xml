@@ -13,5 +13,9 @@
     <select id="findByUsername" parameterType="String" resultType="com.blog.velog.dto.Member">
         SELECT * FROM member WHERE username = #{username}
     </select>
+    
+      <select id="getMemberByEmail" resultType="com.blog.velog.dto.Member">
+        SELECT * FROM member WHERE email = #{email}
+    </select>
 
 </mapper>

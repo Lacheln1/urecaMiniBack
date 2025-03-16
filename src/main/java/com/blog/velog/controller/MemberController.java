@@ -4,6 +4,7 @@ import com.blog.velog.dto.Member;
 import com.blog.velog.service.MemberService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,12 +19,17 @@ public class MemberController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerMember(@Valid @RequestBody Member member) {
-        String result = memberService.registerMember(member);
-        if ("회원가입 성공!".equals(result)) {
-            return ResponseEntity.ok(result);
+    public ResponseEntity<?> registerMember(@Valid @RequestBody Member member, BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
+        
+        String response = memberService.registerMember(member);
+        if ("회원가입 성공!".equals(response)) {
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.badRequest().body(result);
+            return ResponseEntity.badRequest().body(response);
         }
     }
+
 }
