@@ -92,4 +92,16 @@ public class PostController {
 		}
 	}
 	
+	@PostMapping("/{id}/like")
+	public ResponseEntity<String> increaseLike(@PathVariable Long id){
+		try {
+			postService.increaseLike(id);
+			return ResponseEntity.ok("좋아요 증가");
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("좋아요 증가 실패");
+		}
+	}
+	
 }
