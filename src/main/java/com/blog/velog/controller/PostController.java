@@ -1,5 +1,6 @@
 package com.blog.velog.controller;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,21 +28,14 @@ public class PostController {
 	Map<String,Object> storage = new HashMap();
 	
 	@GetMapping("getAllPosts")
-	public List<Post> getAllPosts(){
-		try {
-			Object o = storage.get("fistPagePosts");
-			if(o==null) {
-				List<Post> list = postService.getAllPosts();
-				
-				storage.put("fistPagePosts", list);
-				return list;
-			}
-			return (List<Post>) o;
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-			return null;
-		}
+	public List<Post> getAllPosts() {
+	    System.out.println("겟올포스트");
+	    try {
+	        return postService.getAllPosts(); 
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return Collections.emptyList();
+	    }
 	}
 	
 	@GetMapping("/getPostDetail")
