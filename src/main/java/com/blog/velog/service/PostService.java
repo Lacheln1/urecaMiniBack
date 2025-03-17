@@ -25,7 +25,8 @@ public class PostService {
 		postDao.insertPost(p);
 	}
 	
-	public void updatePost(Post p) throws Exception{
+	public void updatePost(Long id, Post p) throws Exception{
+		p.setId(id);
 		postDao.updatePost(p);
 	}
 	

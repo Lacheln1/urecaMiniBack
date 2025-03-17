@@ -9,8 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,8 +41,8 @@ public class PostController {
 	    }
 	}
 	
-	@GetMapping("/getPostDetail")
-	public ResponseEntity<Post> getPostDetail(@RequestParam Long id){
+	@GetMapping("/getPostDetail/{id}")
+	public ResponseEntity<Post> getPostDetail(@PathVariable Long id){
 		try {
 			Post post = postService.getPostDetail(id);
 			return ResponseEntity.ok(post);
@@ -62,11 +65,12 @@ public class PostController {
 	}
 	
 	
-	@PostMapping("updatePost")
-	public String updatePost(@RequestBody Post p) {
+	@PutMapping("updatePost/{id}")
+	public String updatePost(@PathVariable Long id, @RequestBody Post p) {
 		System.out.println(p);
 		try {
-			postService.updatePost(p);
+			postService.updatePost(id, p);
+			System.out.println(p);
 			return"게시글 수정 완료";
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -75,8 +79,8 @@ public class PostController {
 		}
 	}
 	
-	@PostMapping("deletePost")
-	public String deletePost(@RequestBody Long id) {
+	@DeleteMapping("/deletePost/{id}")
+	public String deletePost(@PathVariable Long id) {
 		System.out.println(id);
 		try {
 			postService.deletePost(id);

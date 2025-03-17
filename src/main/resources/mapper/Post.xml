@@ -18,7 +18,7 @@
   </insert>
   
   <update id = "updatePost" parameterType="Post">
-  	update post set id=#{id} where title=#{title} and content=#{content} and tags=#{tags} and imageUrl=#{imageUrl}
+  	update post set title = #{title}, tags = #{tags} , content=#{content}, image_url = #{imageUrl} where id = #{id}
   </update>
   
   <delete id="deletePost" parameterType="Long">
