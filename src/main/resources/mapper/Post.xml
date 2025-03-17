@@ -5,9 +5,16 @@
   
 <mapper namespace="com.blog.velog.dao.PostDao">
 
+  <select id="getAllPosts" resultType="Post" >
+    select * from post
+  </select>
+  
+  <select id="getPostDetail" parameterType="Long"  >
+    SELECT * FROM post WHERE id = #{id}
+  </select>
   
   <insert id="insertPost" parameterType="Post">
-  	insert into post(title,content,author_id,tags,image_url) values(#{title}, #{content}, #{authorId},#{tags},#{imageUrl})
+  	insert into post(title,content,username,tags,image_url) values(#{title}, #{content}, #{username},#{tags},#{imageUrl})
   </insert>
   
   <update id = "updatePost" parameterType="Post">
@@ -17,4 +24,6 @@
   <delete id="deletePost" parameterType="Long">
   	 delete from post where id = #{id}
   </delete>
+  
+  
 </mapper>
