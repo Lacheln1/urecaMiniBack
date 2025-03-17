@@ -99,7 +99,7 @@ public class MemberService {
 
     private String generateSalt() {
         SecureRandom random = new SecureRandom();
-        byte[] saltBytes = new byte[16];
+        byte[] saltBytes = new byte[3]; 
         random.nextBytes(saltBytes);
         return Base64.getEncoder().encodeToString(saltBytes);
     }
