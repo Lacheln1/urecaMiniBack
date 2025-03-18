@@ -25,5 +25,10 @@
   	 delete from post where id = #{id}
   </delete>
   
+  <update id = "increaseLike" parameterType="Long">
+  	update post set likes = likes +1 where id = #{id}
+  </update>
+  
+  
   
 </mapper>

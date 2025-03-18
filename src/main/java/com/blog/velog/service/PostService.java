@@ -33,4 +33,8 @@ public class PostService {
 	public void deletePost(Long id) throws Exception{
 		postDao.deletePost(id);
 	}
+	
+	public void increaseLike(Long id) throws Exception{
+		postDao.increaseLike(id);
+	}
 }
