@@ -29,6 +29,10 @@
   	update post set likes = likes +1 where id = #{id}
   </update>
   
+  <update id = "decreaseLike" parameterType="Long">
+  	update post set likes = likes -1 where id = #{id}
+  </update>
+  
   
   
 </mapper>
