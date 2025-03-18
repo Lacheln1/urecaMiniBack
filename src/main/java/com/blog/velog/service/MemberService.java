@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -114,4 +116,117 @@ public class MemberService {
             throw new RuntimeException("암호화 오류", e);
         }
     }
+    
+    //사용자 정보 업데이트
+    
+    @Transactional
+    public String updateMember(String email, String bio, String github, String twitter, String website, String username) {
+        if (email == null || email.isEmpty()) {
+            return "요청에 이메일이 포함되어 있지 않습니다.";
+        }
+
+        Optional<Member> optionalMember = memberDao.getMemberByEmail(email);
+        if (optionalMember.isEmpty()) {
+            return "회원 정보를 찾을 수 없습니다.";
+        }
+
+        Map<String, Object> updateParams = new HashMap<>();
+        updateParams.put("email", email);
+
+        if (bio != null && !bio.isEmpty()) updateParams.put("bio", bio);
+        if (github != null && !github.isEmpty()) updateParams.put("github", github);
+        if (twitter != null && !twitter.isEmpty()) updateParams.put("twitter", twitter);
+        if (website != null && !website.isEmpty()) updateParams.put("website", website);
+        if (username != null && !username.isEmpty()) updateParams.put("username", username);
+
+        System.out.println("🔥 업데이트할 데이터: " + updateParams);
+
+        int rowsUpdated = memberDao.updateMember(updateParams);
+        System.out.println("🔥 업데이트 완료, 변경된 행 수: " + rowsUpdated);
+
+        if (rowsUpdated == 0) {
+            return "업데이트 실패: 해당 이메일을 찾을 수 없습니다.";
+        }
+
+        return "회원정보가 성공적으로 업데이트되었습니다.";
+    }
+
+
+
+
+
+    
+    public boolean verifyPassword(String email, String currentPassword) {
+        Optional<Member> optionalMember = memberDao.getMemberByEmail(email);
+        if (optionalMember.isEmpty()) {
+            return false; // 사용자가 존재하지 않음
+        }
+
+        Member member = optionalMember.get();
+        String salt = saltDao.getSaltByEmail(email);
+        String hashedPassword = hashPassword(currentPassword, salt);
+
+        return hashedPassword.equals(member.getPassword()); // 비밀번호가 일치하는지 확인
+    }
+    
+    @Transactional
+    public String updateEmail(String email, String newEmail, String currentPassword) {
+        Optional<Member> optionalMember = memberDao.getMemberByEmail(email);
+        if (optionalMember.isEmpty()) {
+            return "회원 정보를 찾을 수 없습니다.";
+        }
+
+        // 현재 비밀번호 검증
+        boolean isValid = verifyPassword(email, currentPassword);
+        if (!isValid) {
+            return "비밀번호가 일치하지 않습니다.";
+        }
+
+        // member 테이블에서 이메일 변경
+        int memberRowsUpdated = memberDao.updateEmail(email, newEmail);
+        
+        // salt_info 테이블에서도 이메일 변경 추가
+        int saltRowsUpdated = saltDao.updateSaltEmail(email, newEmail); // ✅ 추가된 부분
+
+        System.out.println("🔥 member 변경된 행 수: " + memberRowsUpdated);
+        System.out.println("🔥 salt_info 변경된 행 수: " + saltRowsUpdated);
+
+        // 이메일이 member 테이블과 salt_info 테이블에서 모두 변경되었는지 확인
+        if (memberRowsUpdated == 0 || saltRowsUpdated == 0) {
+            return "이메일 변경 실패: 일부 데이터가 업데이트되지 않음";
+        }
+
+        return "이메일이 성공적으로 변경되었습니다.";
+    }
+
+
+    @Transactional
+    public String changePassword(String email, String currentPassword, String newPassword) {
+        // 이메일로 회원 정보 조회
+        Optional<Member> optionalMember = memberDao.getMemberByEmail(email);
+        if (optionalMember.isEmpty()) {
+            return "회원 정보를 찾을 수 없습니다.";
+        }
+
+        Member member = optionalMember.get();
+        String salt = saltDao.getSaltByEmail(email); // 기존 salt 가져오기
+
+        // 현재 비밀번호 검증
+        if (!verifyPassword(email, currentPassword)) {
+            return "현재 비밀번호가 일치하지 않습니다.";
+        }
+
+        // 새로운 솔트 생성 및 비밀번호 암호화
+        String newSalt = generateSalt();
+        String hashedNewPassword = hashPassword(newPassword, newSalt);
+
+        // 업데이트 실행
+        memberDao.updatePassword(email, hashedNewPassword);
+        saltDao.updateSalt(email, newSalt);
+
+        return "비밀번호가 성공적으로 변경되었습니다.";
+    }
+
+
+
 }

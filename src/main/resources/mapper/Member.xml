@@ -17,5 +17,34 @@
       <select id="getMemberByEmail" resultType="com.blog.velog.dto.Member">
         SELECT * FROM member WHERE email = #{email}
     </select>
+    
+   <update id="updateMember" parameterType="map">
+    UPDATE member
+    <set>
+        <if test="params.username != null and params.username != ''">username = #{params.username},</if>
+        <if test="params.bio != null and params.bio != ''">bio = #{params.bio},</if>
+        <if test="params.github != null and params.github != ''">github = #{params.github},</if>
+        <if test="params.twitter != null and params.twitter != ''">twitter = #{params.twitter},</if>
+        <if test="params.website != null and params.website != ''">website = #{params.website},</if>
+    	</set>
+    		WHERE email = #{params.email}
+		</update>
+
+
+	<update id="updateEmail">
+    	UPDATE member SET email = #{params.newEmail} WHERE email = #{params.email}
+	</update>
+	
+	 <update id="updatePassword">
+    	UPDATE member SET password = #{password} WHERE email = #{email}
+	</update>
+
+	<update id="updateSalt">
+   	 	UPDATE salt_info SET salt = #{salt} WHERE email = #{email}
+	</update>
+
+	<select id="getSaltByEmail" resultType="String">
+    	SELECT salt FROM salt_info WHERE email = #{email}
+	</select>
 
 </mapper>
