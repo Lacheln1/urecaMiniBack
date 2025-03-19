@@ -21,7 +21,7 @@ public class MyConfig implements WebMvcConfigurer{
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // /uploads/** 요청을 프로젝트 루트의 uploads 폴더와 매핑
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:uploads/");
+                .addResourceLocations("file:///C:/Users/psion/Documents/GitHub/urecaMiniBack/uploads/");
     }
 	
 }

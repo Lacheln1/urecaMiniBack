@@ -100,4 +100,26 @@ public class PostService {
 		
 	}
 	
+	// Profile image 업데이트
+    public List<Post> updatePostProfileImageByUsername(String username, String profileImage) throws Exception {
+        // 1. `PostDao`에서 해당 `username`에 해당하는 모든 게시글을 가져옴
+        List<Post> posts = postDao.getPostsByUsername(username);
+
+        // 2. 각 게시글에 대해 profile_image 컬럼을 업데이트
+        for (Post post : posts) {
+            post.setProfileImage(profileImage); // 프로필 이미지 세팅
+            postDao.updateProfileImage(post); // DB에 업데이트
+        }
+
+        // 3. 업데이트 후 결과 반환
+        return posts;
+    }
+	
+    public void syncProfileImages() throws Exception {
+        postDao.syncProfileImages();
+    }
+    
+    
+	
+	
 }	

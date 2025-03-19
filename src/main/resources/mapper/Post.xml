@@ -33,11 +33,11 @@
   	update post set likes = likes -1 where id = #{id}
   </update>
   
-  <update id = "updateProfileImage" parameterType="Post">
-  	update post set profile_image = #{profileImage} where username = #{username}
-  </update>
-  
-  
+  <update id="syncProfileImages">
+    UPDATE post p
+    JOIN member m ON p.username = m.username
+    SET p.profile_image = m.profile_image
+</update>
   
   
 </mapper>

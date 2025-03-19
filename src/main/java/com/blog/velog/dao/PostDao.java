@@ -24,5 +24,13 @@ public interface PostDao {
 	
 	void decreaseLike(@Param("id") Long id) throws Exception;
 	
-	void updateProfileImage(Post post) throws Exception;
+	// username으로 게시글 가져오기
+    List<Post> getPostsByUsername(String username);
+
+    // 프로필 이미지 업데이트
+    void updateProfileImage(Post post);
+    
+    void syncProfileImages() throws Exception;
+	
+	
 }

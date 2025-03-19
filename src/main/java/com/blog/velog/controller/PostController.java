@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.blog.velog.dto.Member;
 import com.blog.velog.dto.Post;
+import com.blog.velog.service.MemberService;
 import com.blog.velog.service.PostService;
 
 @RestController
@@ -27,6 +29,9 @@ public class PostController {
 	
 	@Autowired
 	PostService postService;
+	
+	@Autowired
+	MemberService memberService;
 	
 	Map<String,Object> storage = new HashMap();
 	
@@ -129,4 +134,15 @@ public class PostController {
 		}
 	}
 	
+	 @PutMapping("/syncProfileImages")
+	    public ResponseEntity<String> syncProfileImages() {
+	        try {
+	            postService.syncProfileImages();
+	            return ResponseEntity.ok("Profile images synchronized successfully.");
+	        } catch (Exception e) {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error synchronizing profile images.");
+	        }
+	
+
+	 }
 }
