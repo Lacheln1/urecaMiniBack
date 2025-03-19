@@ -226,6 +226,30 @@ public class MemberService {
 
         return "비밀번호가 성공적으로 변경되었습니다.";
     }
+    
+    
+    @Transactional
+    public String updateProfileImage(String email, String profileImageUrl) {
+        memberDao.updateProfileImage(email, profileImageUrl);
+        return "프로필 이미지가 업데이트되었습니다.";
+    }
+
+    
+    @Transactional
+    public String removeProfileImage(String email) {
+        Optional<Member> optionalMember = memberDao.getMemberByEmail(email);
+        if (optionalMember.isEmpty()) {
+            return "회원 정보를 찾을 수 없습니다.";
+        }
+
+        int rowsUpdated = memberDao.updateProfileImage(email, null); // 이미지 제거 (NULL 값)
+        if (rowsUpdated == 0) {
+            return "프로필 이미지 제거 실패!";
+        }
+
+        return "프로필 이미지가 성공적으로 제거되었습니다.";
+    }
+    
 
 
 
