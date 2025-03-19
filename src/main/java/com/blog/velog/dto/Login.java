@@ -8,6 +8,8 @@ public class Login {
     private String token;
     private String loginStatus;
     private Timestamp firstLogin;
+    private int failCount;
+    private Timestamp blockTime;
 
     // 생성자
     public Login() {}
@@ -35,4 +37,12 @@ public class Login {
 
     public Timestamp getFirstLogin() { return firstLogin; }
     public void setFirstLogin(Timestamp firstLogin) { this.firstLogin = firstLogin; }
+    
+    public int getFailCount() { return failCount; }
+    public void setFailCount(int failCount) { this.failCount = failCount; }
+    
+    public Timestamp getBlockTime() { return blockTime; }
+    public void setBlockTime(Timestamp blockTime) { this.blockTime = blockTime; }
+    
+    
 }

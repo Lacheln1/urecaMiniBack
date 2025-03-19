@@ -11,7 +11,7 @@ public class MyConfig implements WebMvcConfigurer{
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
-		.allowedOrigins("http://127.0.0.1:5500/")
+		.allowedOrigins("http://127.0.0.1:5500")
 		.allowedMethods("*")
 		.allowedHeaders("*")
 		.allowCredentials(true); //쿠키, 세션 정보도 허용

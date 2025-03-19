@@ -18,21 +18,14 @@
         SELECT * FROM member WHERE email = #{email}
     </select>
     
-   <update id="updateMember" parameterType="map">
-    UPDATE member
-    <set>
-        <if test="params.username != null and params.username != ''">username = #{params.username},</if>
-        <if test="params.bio != null and params.bio != ''">bio = #{params.bio},</if>
-        <if test="params.github != null and params.github != ''">github = #{params.github},</if>
-        <if test="params.twitter != null and params.twitter != ''">twitter = #{params.twitter},</if>
-        <if test="params.website != null and params.website != ''">website = #{params.website},</if>
-    	</set>
-    		WHERE email = #{params.email}
-		</update>
+  	<update id="updateMember" parameterType="map">
+    	UPDATE member SET github = #{github}, twitter = #{twitter}, website = #{website}
+    	WHERE email = #{email}
+	</update>
 
 
 	<update id="updateEmail">
-    	UPDATE member SET email = #{params.newEmail} WHERE email = #{params.email}
+    UPDATE member	SET email = #{newEmail}	WHERE email = #{email}
 	</update>
 	
 	 <update id="updatePassword">
