@@ -20,6 +20,8 @@ public interface MemberDao {
     int updateEmail(@Param("email") String email, @Param("newEmail") String newEmail);
     
     void updatePassword(@Param("email") String email, @Param("password") String password);
+    
     void updateSalt(@Param("email") String email, @Param("salt") String salt);
     
+    int updateProfileImage(@Param("email") String email, @Param("profileImage") String profileImage);
 }

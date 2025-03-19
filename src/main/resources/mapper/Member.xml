@@ -46,5 +46,9 @@
 	<select id="getSaltByEmail" resultType="String">
     	SELECT salt FROM salt_info WHERE email = #{email}
 	</select>
+	
+	<update id="updateProfileImage">
+    	UPDATE member SET profile_image = #{profileImage} WHERE email = #{email}
+	</update>
 
 </mapper>
