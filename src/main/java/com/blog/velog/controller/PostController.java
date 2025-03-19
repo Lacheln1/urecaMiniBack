@@ -104,4 +104,16 @@ public class PostController {
 		}
 	}
 	
+	@PostMapping("/{id}/unlike")
+	public ResponseEntity<String> decreaseLike(@PathVariable Long id){
+		try {
+			postService.decreaseLike(id);
+			return ResponseEntity.ok("좋아요 감소");
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("좋아요 감소 실패");
+		}
+	}
+	
 }
