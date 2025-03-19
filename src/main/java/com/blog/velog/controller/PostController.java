@@ -104,4 +104,29 @@ public class PostController {
 		}
 	}
 	
+	@PostMapping("/{id}/unlike")
+	public ResponseEntity<String> decreaseLike(@PathVariable Long id){
+		try {
+			postService.decreaseLike(id);
+			return ResponseEntity.ok("좋아요 감소");
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("좋아요 감소 실패");
+		}
+	}
+	
+	@PutMapping("updateProfileImage/{username}")
+	public String updateProfileImage(@PathVariable String username, @RequestBody Post p) {
+		System.out.println(p);
+		try {
+			postService.updateProfileImage(username, p);
+			return "프로필 이미지 업데이트 완료";
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return "업데이트 실패";
+		}
+	}
+	
 }

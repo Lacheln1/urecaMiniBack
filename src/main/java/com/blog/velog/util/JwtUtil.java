@@ -9,7 +9,7 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    @Value("${jwt.secret}") // 🔥 application.properties에서 키 값 가져오기
+    @Value("${jwt.secret}") // application.properties에서 키 값 가져오기
     private String SECRET_KEY;
 
     private static final long EXPIRATION_TIME = 1000 * 60 * 30; // 30분
@@ -19,13 +19,13 @@ public class JwtUtil {
                 .setSubject(email)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes()) // 🔥 여기 수정
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes())
                 .compact();
     }
 
     public String extractEmail(String token) {
         return Jwts.parser()
-                .setSigningKey(SECRET_KEY.getBytes()) // 🔥 여기 수정
+                .setSigningKey(SECRET_KEY.getBytes()) 
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
@@ -34,7 +34,7 @@ public class JwtUtil {
     public boolean validateToken(String token) {
         try {
             Jwts.parser()
-                .setSigningKey(SECRET_KEY.getBytes()) // 🔥 여기 수정
+                .setSigningKey(SECRET_KEY.getBytes())
                 .parseClaimsJws(token);
             return true;
         } catch (Exception e) {

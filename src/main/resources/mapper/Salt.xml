@@ -12,5 +12,15 @@
     <select id="getSaltByEmail" parameterType="String" resultType="String">
         SELECT salt FROM salt_info WHERE email = #{email};
     </select>
+    
+    <update id="updateSaltEmail">
+    	UPDATE salt_info SET email = #{newEmail} WHERE email = #{email}
+	</update>
+	
+	<update id="updateSalt">
+   	 	UPDATE salt_info SET salt = #{newSalt} WHERE email = #{email}
+	</update>
+	
+	
 
 </mapper>

@@ -21,4 +21,8 @@ public interface PostDao {
 	Post getPostDetail(@Param("id") Long id) throws Exception;
 	
 	void increaseLike(@Param("id") Long id) throws Exception;
+	
+	void decreaseLike(@Param("id") Long id) throws Exception;
+	
+	void updateProfileImage(Post post) throws Exception;
 }

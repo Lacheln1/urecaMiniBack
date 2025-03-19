@@ -8,6 +8,10 @@ import java.sql.Timestamp;
 public class Member {
     
     private Long id; // Auto Increment Primary Key
+    private String bio;
+    private String github;
+    private String twitter;
+    private String website;
 
     @NotBlank(message = "닉네임은 필수 입력값입니다.")
     @Size(max = 50, message = "닉네임은 50자 이하로 입력해주세요.")
@@ -50,4 +54,16 @@ public class Member {
 
     public Timestamp getCreatedAt() { return createdAt; }
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
+    
+    public String getBio() { return bio; }
+    public void setBio(String bio) { this.bio = bio; }
+    
+    public String getGithub() { return github; }
+    public void setGithub(String github) { this.github = github; }
+
+    public String getTwitter() { return twitter; }
+    public void setTwitter(String twitter) { this.twitter = twitter; }
+
+    public String getWebsite() { return website; }
+    public void setWebsite(String website) { this.website = website; }
 }
