@@ -19,4 +19,18 @@ public interface PostDao {
 	void deletePost(@Param("id") Long id) throws Exception;
 	
 	Post getPostDetail(@Param("id") Long id) throws Exception;
+	
+	void increaseLike(@Param("id") Long id) throws Exception;
+	
+	void decreaseLike(@Param("id") Long id) throws Exception;
+	
+	// username으로 게시글 가져오기
+    List<Post> getPostsByUsername(String username);
+
+    // 프로필 이미지 업데이트
+    void updateProfileImage(Post post);
+    
+    void syncProfileImages() throws Exception;
+	
+	
 }

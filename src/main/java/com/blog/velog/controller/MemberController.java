@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -259,6 +260,11 @@ public class MemberController {
             System.out.println("🚨 이미지 삭제 중 오류 발생: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 제거 실패: " + e.getMessage());
         }
+    }
+    
+    @GetMapping("getUserProfileImage/{username}")
+    public List<Member> getUserProfileImage(@PathVariable String username) throws Exception {
+     return	memberService.getUserProfileImage(username);
     }
     
 }

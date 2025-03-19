@@ -9,13 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.blog.velog.dto.Member;
 import com.blog.velog.dto.Post;
+import com.blog.velog.service.MemberService;
 import com.blog.velog.service.PostService;
 
 @RestController
@@ -24,6 +29,9 @@ public class PostController {
 	
 	@Autowired
 	PostService postService;
+	
+	@Autowired
+	MemberService memberService;
 	
 	Map<String,Object> storage = new HashMap();
 	
@@ -38,8 +46,8 @@ public class PostController {
 	    }
 	}
 	
-	@GetMapping("/getPostDetail")
-	public ResponseEntity<Post> getPostDetail(@RequestParam Long id){
+	@GetMapping("/getPostDetail/{id}")
+	public ResponseEntity<Post> getPostDetail(@PathVariable Long id){
 		try {
 			Post post = postService.getPostDetail(id);
 			return ResponseEntity.ok(post);
@@ -62,11 +70,12 @@ public class PostController {
 	}
 	
 	
-	@PostMapping("updatePost")
-	public String updatePost(@RequestBody Post p) {
+	@PutMapping("updatePost/{id}")
+	public String updatePost(@PathVariable Long id, @RequestBody Post p) {
 		System.out.println(p);
 		try {
-			postService.updatePost(p);
+			postService.updatePost(id, p);
+			System.out.println(p);
 			return"게시글 수정 완료";
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -75,8 +84,8 @@ public class PostController {
 		}
 	}
 	
-	@PostMapping("deletePost")
-	public String deletePost(@RequestBody Long id) {
+	@DeleteMapping("/deletePost/{id}")
+	public String deletePost(@PathVariable Long id) {
 		System.out.println(id);
 		try {
 			postService.deletePost(id);
@@ -88,4 +97,52 @@ public class PostController {
 		}
 	}
 	
+	@PostMapping("/{id}/like")
+	public ResponseEntity<String> increaseLike(@PathVariable Long id){
+		try {
+			postService.increaseLike(id);
+			return ResponseEntity.ok("좋아요 증가");
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("좋아요 증가 실패");
+		}
+	}
+	
+	@PostMapping("/{id}/unlike")
+	public ResponseEntity<String> decreaseLike(@PathVariable Long id){
+		try {
+			postService.decreaseLike(id);
+			return ResponseEntity.ok("좋아요 감소");
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("좋아요 감소 실패");
+		}
+	}
+	
+	@PutMapping("updateProfileImage/{username}")
+	public String updateProfileImage(@PathVariable String username, @RequestBody Post p) {
+		System.out.println(p);
+		try {
+			postService.updateProfileImage(username, p);
+			return "프로필 이미지 업데이트 완료";
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return "업데이트 실패";
+		}
+	}
+	
+	 @PutMapping("/syncProfileImages")
+	    public ResponseEntity<String> syncProfileImages() {
+	        try {
+	            postService.syncProfileImages();
+	            return ResponseEntity.ok("Profile images synchronized successfully.");
+	        } catch (Exception e) {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error synchronizing profile images.");
+	        }
+	
+
+	 }
 }

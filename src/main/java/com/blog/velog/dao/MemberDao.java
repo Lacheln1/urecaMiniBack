@@ -1,11 +1,13 @@
 package com.blog.velog.dao;
 
-import com.blog.velog.dto.Member;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.Map;
-import java.util.Optional;
+import com.blog.velog.dto.Member;
 
 @Mapper
 public interface MemberDao {
@@ -15,9 +17,15 @@ public interface MemberDao {
     
     Optional<Member> getMemberByEmail(@Param("email") String email);
     
+
     void updateMember(@Param("email") String email, @Param("github") String github, @Param("twitter") String twitter, @Param("website") String website);
     
     void deleteLoginInfo(@Param("email") String email);
+
+    List<Member> getUserProfileImage(@Param("username") String username);
+    
+   
+
     
     int updateEmail(@Param("email") String email, @Param("newEmail") String newEmail);
     
