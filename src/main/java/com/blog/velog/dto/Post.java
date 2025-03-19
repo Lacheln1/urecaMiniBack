@@ -2,8 +2,33 @@ package com.blog.velog.dto;
 
 import java.util.Date;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 public class Post {
-	private String title,content,username,tags,imageUrl,profileImage;
+	@NotBlank(message = "title는 빈칸이 될 수 없습니다.")
+	@NotNull(message="title : null")
+	@Size(max=255, message="title은 255자를 넘을 수 없습니다.")
+	private String title;
+	
+	@NotBlank(message = "content는 빈칸이 될 수 없습니다.")
+	@NotNull(message="content : null")
+	private String content;
+	
+	@NotBlank(message = "username는 빈칸이 될 수 없습니다.")
+	@NotNull(message="username : null")
+	@Size(max=50, message="username은 50자를 넘을 수 없습니다.")
+	private String username;
+	
+	@NotBlank(message = "tags는 빈칸이 될 수 없습니다.")
+	@NotNull(message="tags : null")
+	@Size(max=255, message="tags은 255자를 넘을 수 없습니다.")
+	private String tags;
+	
+	
+	private String imageUrl;
+	private String profileImage;
 	private long id; //sql에서 bigInt타입으로 선언돼서 long타입
 	private int likes;
 	private Date createdAt;
