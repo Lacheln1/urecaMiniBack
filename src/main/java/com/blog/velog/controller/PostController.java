@@ -116,4 +116,17 @@ public class PostController {
 		}
 	}
 	
+	@PutMapping("updateProfileImage/{username}")
+	public String updateProfileImage(@PathVariable String username, @RequestBody Post p) {
+		System.out.println(p);
+		try {
+			postService.updateProfileImage(username, p);
+			return "프로필 이미지 업데이트 완료";
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return "업데이트 실패";
+		}
+	}
+	
 }

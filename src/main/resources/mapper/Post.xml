@@ -33,6 +33,11 @@
   	update post set likes = likes -1 where id = #{id}
   </update>
   
+  <update id = "updateProfileImage" parameterType="Post">
+  	update post set profile_image = #{profileImage} where username = #{username}
+  </update>
+  
+  
   
   
 </mapper>
