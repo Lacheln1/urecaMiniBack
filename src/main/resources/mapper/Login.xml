@@ -4,20 +4,45 @@
 
 <mapper namespace="com.blog.velog.dao.LoginDao">
 
-    <!-- 🔹 로그인 성공 시 기록 저장 -->
+    <!-- 로그인 성공 시 기록 저장 -->
     <insert id="insertLoginInfo">
         INSERT INTO login (email, pwd, token, login_status, first_login)
-        VALUES (#{email}, #{pwd}, #{token}, #{status}, NOW());
+        VALUES (#{email}, #{pwd}, #{token}, #{status}, NOW())
+        ON DUPLICATE KEY UPDATE 
+            pwd = VALUES(pwd), 
+            token = VALUES(token), 
+            login_status = VALUES(login_status), 
+            first_login = NOW();
     </insert>
 
-    <!-- 🔹 특정 이메일의 로그인 정보 조회 -->
+    <!-- 특정 이메일의 로그인 정보 조회 -->
     <select id="getLoginInfoByEmail" parameterType="String" resultType="com.blog.velog.dto.Login">
         SELECT * FROM login WHERE email = #{email}
     </select>
 
-    <!-- 🔹 로그아웃 시 로그인 기록 삭제 -->
+    <!-- 로그아웃 시 로그인 기록 삭제 -->
     <delete id="deleteLoginInfo">
         DELETE FROM login WHERE email = #{email}
     </delete>
+    
+    <!-- 로그인 실패 시 실패 횟수 증가 -->
+    <update id = "increaseFailCount">
+    	UPDATE login SET fail_count = fail_count + 1 WHERE email = #{email}
+    </update>
+    
+    <!-- 로그인 성공 시 실패 횟수 초기화 -->
+    <update id = "resetFailCount">
+    	UPDATE login SET fail_count = 0, block_time = NULL WHERE email = #{email}
+    </update>
+    
+    <!-- 로그인 차단 시간 설정 -->
+    <update id = "setBlockTime">
+    	UPDATE login SET block_time = #{blockTime} WHERE email = #{email}
+    </update>
+    
+    <!--차단 해제 시간이 지났는지 확인  -->
+    <select id = "getBlockTime" parameterType = "String" resultType = "String">
+    	SELECT block_time FROM login WHERE email = #{email}
+    </select>
 
 </mapper>

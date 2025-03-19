@@ -60,19 +60,7 @@ public class MemberController {
         String email = request.get("email");
         String password = request.get("password");
 
-        String token = memberService.authenticateMember(email, password);
-        Optional<Member> member = memberService.getMemberByEmail(email);
-        
-        
-        if (token != null) {
-            Map<String, String> response = new HashMap<>();
-            response.put("token", token.toString());
-            response.put("email", email);
-            response.put("username", member.get().getUsername());
-
-            return ResponseEntity.ok(response);
-        }
-        return ResponseEntity.badRequest().body("로그인 실패: 이메일 또는 비밀번호가 올바르지 않습니다.");
+        return memberService.authenticateMember(email, password);
     }
 
     
@@ -128,20 +116,14 @@ public class MemberController {
 
 
     @PutMapping("/update")
-    public ResponseEntity<String> updateMember(@RequestHeader("Authorization") String token, @RequestBody Map<String, String> request) {
-        String email = jwtUtil.extractEmail(token.substring(7));
-        
-        String username = request.get("username");
-        String bio = request.get("bio");
-        String github = request.get("github");
-        String twitter = request.get("twitter");
-        String website = request.get("website");
+    public ResponseEntity<?> updateSocialInfo(@RequestBody Map<String, String> requestData) {
+        String email = requestData.get("email");
+        String github = requestData.getOrDefault("github", "");
+        String twitter = requestData.getOrDefault("twitter", "");
+        String website = requestData.getOrDefault("website", "");
 
-        System.out.println("✅ 프로필 업데이트 요청: " + request);
-
-        String result = memberService.updateMember(email, bio, github, twitter, website, username);
-
-        return ResponseEntity.ok(result);
+        memberService.updateSocialInfo(email, github, twitter, website);
+        return ResponseEntity.ok("소셜 정보가 성공적으로 업데이트되었습니다.");
     }
     
     
@@ -214,32 +196,32 @@ public class MemberController {
             
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
-                System.out.println("📂 업로드 디렉토리 생성됨: " + uploadPath.toAbsolutePath());
+                System.out.println("로드 디렉토리 생성됨: " + uploadPath.toAbsolutePath());
             }
 
             String fileName = email + "_" + file.getOriginalFilename();
             Path filePath = uploadPath.resolve(fileName);
 
-            System.out.println("📂 파일이 저장될 경로: " + filePath.toAbsolutePath());
+            System.out.println("파일이 저장될 경로: " + filePath.toAbsolutePath());
 
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
             String profileImageUrl = "/uploads/" + fileName;  // DB에 저장되는 URL
             memberService.updateProfileImage(email, profileImageUrl);
 
-            System.out.println("✅ 프로필 이미지 저장 성공: " + profileImageUrl);
+            System.out.println("프로필 이미지 저장 성공: " + profileImageUrl);
 
             Map<String, String> response = new HashMap<>();
             response.put("profileImageUrl", profileImageUrl);
             return ResponseEntity.ok(response);
         } catch (IOException e) {
-            System.out.println("❌ 파일 저장 오류: " + e.getMessage());
+            System.out.println("파일 저장 오류: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 저장 실패");
         }
     }
     
 
-    // ✅ 프로필 이미지 삭제 API
+    // 프로필 이미지 삭제 API
     @PutMapping("/remove-profile-image")
     public ResponseEntity<String> removeProfileImage(@RequestHeader("Authorization") String token) {
         String email = jwtUtil.extractEmail(token.substring(7));
@@ -253,12 +235,12 @@ public class MemberController {
             Member member = optionalMember.get();
             String profileImagePath = member.getProfileImage();  // 현재 프로필 이미지 경로
 
-            // ✅ 기본 이미지인 경우 삭제하지 않음
+            // 기본 이미지인 경우 삭제하지 않음
             if (profileImagePath == null || profileImagePath.equals("/uploads/no-intro.png")) {
                 return ResponseEntity.ok("기본 이미지이므로 삭제할 필요가 없습니다.");
             }
 
-            // ✅ 실제 파일 삭제
+            // 실제 파일 삭제
             File file = new File("uploads/" + profileImagePath.replace("/uploads/", ""));
             if (file.exists()) {
                 boolean deleted = file.delete(); // 파일 삭제
@@ -269,7 +251,7 @@ public class MemberController {
                 System.out.println("🚨 삭제하려는 파일이 존재하지 않습니다: " + file.getAbsolutePath());
             }
 
-            // ✅ DB에서 기본 이미지로 변경
+            // DB에서 기본 이미지로 변경
             memberService.updateProfileImage(email, "/uploads/no-intro.png");
 
             return ResponseEntity.ok("프로필 이미지가 기본 이미지로 변경되었습니다.");

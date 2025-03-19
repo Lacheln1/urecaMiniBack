@@ -3,14 +3,18 @@ package com.blog.velog.service;
 import com.blog.velog.dao.MemberDao;
 import com.blog.velog.dao.SaltDao;
 import com.blog.velog.dao.LoginDao; // LoginDao 추가
+import com.blog.velog.dto.Login;
 import com.blog.velog.dto.Member;
 import com.blog.velog.util.JwtUtil;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.MessageDigest;
 import java.security.SecureRandom;
+import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -66,28 +70,86 @@ public class MemberService {
 
     // 로그인 -> 비밀번호 검증 -> JWT 발급 -> 로그인 정보 저장
     @Transactional
-    public String authenticateMember(String email, String password) {
+    public ResponseEntity<?> authenticateMember(String email, String password) {
         Optional<Member> optionalMember = memberDao.getMemberByEmail(email);
+        Optional<String> blockTimeOpt = loginDao.getBlockTime(email);
+        Optional<Login> loginInfoOpt = loginDao.getLoginInfoByEmail(email);
+        
+        System.out.println("🚀 [디버깅] 현재 차단 시간 조회: " + blockTimeOpt.orElse("NULL"));
+        System.out.println("🚀 현재 시간: " + new Timestamp(System.currentTimeMillis()));
+
+        int failCount = loginInfoOpt.map(Login::getFailCount).orElse(0);
+
+        // 🚨 로그인 차단 시간 확인
+        if (blockTimeOpt.isPresent() && failCount >= 5) {
+            Timestamp blockTime = Timestamp.valueOf(blockTimeOpt.get());
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+
+            if (currentTime.before(blockTime)) {
+                long secondsLeft = (blockTime.getTime() - currentTime.getTime()) / 1000;
+                long minutesLeft = secondsLeft / 60;
+
+                String blockMessage = (minutesLeft > 0) ?
+                        "로그인 차단됨! " + minutesLeft + "분 후에 다시 시도하세요." :
+                        "로그인 차단됨! " + secondsLeft + "초 후에 다시 시도하세요.";
+
+                System.out.println("🚨 차단 메시지 반환: " + blockMessage);
+
+                // ✅ JSON 형식으로 응답 반환
+                Map<String, String> response = new HashMap<>();
+                response.put("errorMessage", blockMessage);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+            }
+        }
 
         if (optionalMember.isPresent()) {
             Member member = optionalMember.get();
             String salt = saltDao.getSaltByEmail(email);
             String hashedPassword = hashPassword(password, salt);
+            String storedPassword = member.getPassword();
 
-            if (hashedPassword.equals(member.getPassword())) {
+            if (hashedPassword.equals(storedPassword)) {
                 String token = jwtUtil.generateToken(email);
-
-                //  로그인 성공 시 DB에 기록 저장
                 loginDao.insertLoginInfo(email, hashedPassword, token, "Success");
+                loginDao.resetFailCount(email);
 
-                return token;
+                // ✅ 정상 로그인 응답
+                Map<String, String> response = new HashMap<>();
+                response.put("token", token);
+                response.put("email", email);
+                response.put("username", member.getUsername());
+
+                return ResponseEntity.ok(response);
+            } else {
+                System.out.println("비밀번호가 일치하지 않음");
             }
         }
 
-        //  로그인 실패 시 기록 저장
+        // 로그인 실패 처리
         loginDao.insertLoginInfo(email, "", "", "Fail");
-        return null;
+        loginDao.increaseFailCount(email);
+
+        // 🚨 5회 이상 실패 시 차단
+        if (failCount >= 5) {
+            Optional<String> existingBlockTimeOpt = loginDao.getBlockTime(email);
+            if (existingBlockTimeOpt.isEmpty() || Timestamp.valueOf(existingBlockTimeOpt.get()).before(new Timestamp(System.currentTimeMillis()))) {
+                Timestamp newBlockTime = new Timestamp(System.currentTimeMillis() + (10 * 60 * 1000));
+                System.out.println("🚀 새로운 차단 시간 설정: " + newBlockTime);
+                loginDao.setBlockTime(email, newBlockTime.toString());
+            }
+
+            Map<String, String> response = new HashMap<>();
+            response.put("errorMessage", "5회 이상 로그인 실패! 10분 후 다시 시도하세요.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }
+
+        Map<String, String> response = new HashMap<>();
+        response.put("errorMessage", "로그인 실패: 이메일 또는 비밀번호가 올바르지 않습니다.");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
+
+
+    
 
     // 로그아웃 기능
     @Transactional
@@ -120,35 +182,12 @@ public class MemberService {
     //사용자 정보 업데이트
     
     @Transactional
-    public String updateMember(String email, String bio, String github, String twitter, String website, String username) {
+    public void updateSocialInfo(String email, String github, String twitter, String website) {
         if (email == null || email.isEmpty()) {
-            return "요청에 이메일이 포함되어 있지 않습니다.";
+            throw new IllegalArgumentException("이메일이 필요합니다.");
         }
 
-        Optional<Member> optionalMember = memberDao.getMemberByEmail(email);
-        if (optionalMember.isEmpty()) {
-            return "회원 정보를 찾을 수 없습니다.";
-        }
-
-        Map<String, Object> updateParams = new HashMap<>();
-        updateParams.put("email", email);
-
-        if (bio != null && !bio.isEmpty()) updateParams.put("bio", bio);
-        if (github != null && !github.isEmpty()) updateParams.put("github", github);
-        if (twitter != null && !twitter.isEmpty()) updateParams.put("twitter", twitter);
-        if (website != null && !website.isEmpty()) updateParams.put("website", website);
-        if (username != null && !username.isEmpty()) updateParams.put("username", username);
-
-        System.out.println("🔥 업데이트할 데이터: " + updateParams);
-
-        int rowsUpdated = memberDao.updateMember(updateParams);
-        System.out.println("🔥 업데이트 완료, 변경된 행 수: " + rowsUpdated);
-
-        if (rowsUpdated == 0) {
-            return "업데이트 실패: 해당 이메일을 찾을 수 없습니다.";
-        }
-
-        return "회원정보가 성공적으로 업데이트되었습니다.";
+        memberDao.updateMember(email, github, twitter, website);
     }
 
 

@@ -15,7 +15,9 @@ public interface MemberDao {
     
     Optional<Member> getMemberByEmail(@Param("email") String email);
     
-    int updateMember(@Param("params") Map<String, Object> params);
+    void updateMember(@Param("email") String email, @Param("github") String github, @Param("twitter") String twitter, @Param("website") String website);
+    
+    void deleteLoginInfo(@Param("email") String email);
     
     int updateEmail(@Param("email") String email, @Param("newEmail") String newEmail);
     
