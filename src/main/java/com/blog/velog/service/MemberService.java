@@ -17,6 +17,7 @@ import java.security.SecureRandom;
 import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -305,7 +306,10 @@ public class MemberService {
         return "프로필 이미지가 성공적으로 제거되었습니다.";
     }
     
-
+    @Transactional
+    public  List<Member> getUserProfileImage(String username) {
+		return memberDao.getUserProfileImage(username); 
+    }
 
 
 }

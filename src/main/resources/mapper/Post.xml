@@ -18,12 +18,26 @@
   </insert>
   
   <update id = "updatePost" parameterType="Post">
-  	update post set id=#{id} where title=#{title} and content=#{content} and tags=#{tags} and imageUrl=#{imageUrl}
+  	update post set title = #{title}, tags = #{tags} , content=#{content}, image_url = #{imageUrl} where id = #{id}
   </update>
   
   <delete id="deletePost" parameterType="Long">
   	 delete from post where id = #{id}
   </delete>
+  
+  <update id = "increaseLike" parameterType="Long">
+  	update post set likes = likes +1 where id = #{id}
+  </update>
+  
+  <update id = "decreaseLike" parameterType="Long">
+  	update post set likes = likes -1 where id = #{id}
+  </update>
+  
+  <update id="syncProfileImages">
+    UPDATE post p
+    JOIN member m ON p.username = m.username
+    SET p.profile_image = m.profile_image
+</update>
   
   
 </mapper>

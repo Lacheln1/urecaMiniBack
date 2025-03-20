@@ -51,6 +51,10 @@
     	UPDATE member SET profile_image = #{profileImage} WHERE email = #{email}
 	</update>
 	
+	<select id="getUserProfileImage" resultType="String">
+    	SELECT profile_image FROM member WHERE username = #{username}
+	</select>
+
 	
 
 </mapper>
