@@ -9,10 +9,11 @@
         INSERT INTO member (username, name, email, password, profile_image, created_at)
         VALUES (#{username}, #{name}, #{email}, #{password}, #{profileImage}, NOW());
     </insert>
-
-    <select id="findByUsername" parameterType="String" resultType="com.blog.velog.dto.Member">
-        SELECT * FROM member WHERE username = #{username}
-    </select>
+    
+    <select id="findByEmail" parameterType="string" resultType="com.blog.velog.dto.Member">
+    	SELECT * FROM member WHERE email = #{email}
+	</select>
+    
     
       <select id="getMemberByEmail" resultType="com.blog.velog.dto.Member">
         SELECT * FROM member WHERE email = #{email}

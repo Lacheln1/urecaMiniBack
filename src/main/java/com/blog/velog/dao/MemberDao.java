@@ -3,6 +3,7 @@ package com.blog.velog.dao;
 import com.blog.velog.dto.Member;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.Map;
 import java.util.Optional;
@@ -10,6 +11,8 @@ import java.util.Optional;
 @Mapper
 public interface MemberDao {
     void insertMember(Member member);
+    
+    Optional<Member> findByEmail(String email);
     
     Optional<Member> findByUsername(@Param("username") String username);
     
@@ -26,4 +29,6 @@ public interface MemberDao {
     void updateSalt(@Param("email") String email, @Param("salt") String salt);
     
     int updateProfileImage(@Param("email") String email, @Param("profileImage") String profileImage);
+    
+    
 }

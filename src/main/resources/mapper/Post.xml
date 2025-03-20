@@ -5,25 +5,27 @@
   
 <mapper namespace="com.blog.velog.dao.PostDao">
 
-  <select id="getAllPosts" resultType="Post" >
-    select * from post
-  </select>
-  
-  <select id="getPostDetail" parameterType="Long"  >
-    SELECT * FROM post WHERE id = #{id}
-  </select>
-  
-  <insert id="insertPost" parameterType="Post">
-  	insert into post(title,content,username,tags,image_url) values(#{title}, #{content}, #{username},#{tags},#{imageUrl})
-  </insert>
-  
-  <update id = "updatePost" parameterType="Post">
-  	update post set id=#{id} where title=#{title} and content=#{content} and tags=#{tags} and imageUrl=#{imageUrl}
-  </update>
-  
-  <delete id="deletePost" parameterType="Long">
-  	 delete from post where id = #{id}
-  </delete>
-  
-  
+    <select id="getAllPosts" resultType="com.blog.velog.dto.Post">
+        SELECT * FROM post
+    </select>
+
+    <select id="getPostDetail" parameterType="java.lang.Long">
+        SELECT * FROM post WHERE id = #{id}
+    </select>
+
+    <insert id="insertPost" parameterType="com.blog.velog.dto.Post">
+        INSERT INTO post(title, content, username, tags, image_url)
+        VALUES (#{title}, #{content}, #{username}, #{tags}, #{imageUrl})
+    </insert>
+
+    <update id="updatePost" parameterType="com.blog.velog.dto.Post">
+        UPDATE post
+        SET title = #{title}, content = #{content}, tags = #{tags}, image_url = #{imageUrl}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deletePost" parameterType="java.lang.Long">
+        DELETE FROM post WHERE id = #{id}
+    </delete>
+
 </mapper>

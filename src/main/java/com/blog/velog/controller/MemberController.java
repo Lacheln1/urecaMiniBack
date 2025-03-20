@@ -60,24 +60,54 @@ public class MemberController {
         String email = request.get("email");
         String password = request.get("password");
 
-        return memberService.authenticateMember(email, password);
+        ResponseEntity<?> response = memberService.authenticateMember(email, password);
+
+        // 🔥 로그인 성공 후 토큰 확인
+        System.out.println("로그인 응답: " + response.getBody());
+        return response;
     }
+    
+    
+    
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshAuthToken(@RequestHeader("Authorization") String token) {
+        try {
+            if (token == null || !token.startsWith("Bearer ")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 요청입니다.");
+            }
+
+            String jwt = token.substring(7).replace("\"", "");
+            if (!jwtUtil.validateToken(jwt)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("토큰이 유효하지 않습니다.");
+            }
+
+            String email = jwtUtil.extractEmail(jwt);
+            String newToken = jwtUtil.generateToken(email);
+            return ResponseEntity.ok(newToken);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("토큰 갱신 실패");
+        }
+    }
+
+    
+    
 
     
     
     //로그아웃
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody Map<String, String> request) {
+    public ResponseEntity<Map<String, String>> logout(@RequestBody Map<String, String> request) {
         String email = request.get("email");
 
         if (email == null) {
-            return ResponseEntity.badRequest().body("이메일이 제공되지 않았습니다.");
+            return ResponseEntity.badRequest().body(Map.of("error", "이메일이 제공되지 않았습니다."));
         }
 
-        //  로그인 기록 삭제
         memberService.logoutMember(email);
 
-        return ResponseEntity.ok("로그아웃 성공!");
+        // 🛑 기존 코드에서 String 반환 → JSON 반환으로 변경 필요
+        return ResponseEntity.ok(Map.of("message", "로그아웃 성공!"));
     }
     
     // 로그인한 사용자 정보 가져오기
@@ -90,17 +120,19 @@ public class MemberController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효하지 않은 요청 형식입니다.");
             }
 
-            // Bearer  제거 후, 혹시 남아있을 수 있는 따옴표 제거
-            String jwt = token.substring(7).replace("\"", ""); 
+            String jwt = token.substring(7).replace("\"", "");
             System.out.println("실제 JWT 토큰: " + jwt);
 
             // JWT에서 이메일 추출
             String email = jwtUtil.extractEmail(jwt);
             System.out.println("추출된 이메일: " + email);
 
-            // DB에서 사용자 정보 가져오기
-            Optional<Member> memberOptional = memberService.getMemberByEmail(email);
+            // 🔥 토큰 유효성 검사 추가
+            if (!jwtUtil.validateToken(jwt)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("토큰이 만료되었거나 유효하지 않습니다.");
+            }
 
+            Optional<Member> memberOptional = memberService.getMemberByEmail(email);
             if (memberOptional.isPresent()) {
                 Member member = memberOptional.get();
                 return ResponseEntity.ok(member);
@@ -112,6 +144,7 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("JWT 토큰이 유효하지 않습니다.");
         }
     }
+
 
 
 
