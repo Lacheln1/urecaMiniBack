@@ -17,8 +17,10 @@ public interface MemberDao {
     
     Optional<Member> getMemberByEmail(@Param("email") String email);
     
+    void updateSocialInfo(@Param("email") String email, @Param("github") String github, @Param("twitter") String twitter, @Param("website") String website);
+    
+    void updateProfileInfo(@Param("email") String email, @Param("username") String username, @Param("bio") String bio);
 
-    void updateMember(@Param("email") String email, @Param("github") String github, @Param("twitter") String twitter, @Param("website") String website);
     
     void deleteLoginInfo(@Param("email") String email);
 
@@ -34,4 +36,6 @@ public interface MemberDao {
     void updateSalt(@Param("email") String email, @Param("salt") String salt);
     
     int updateProfileImage(@Param("email") String email, @Param("profileImage") String profileImage);
+    
+ 
 }
