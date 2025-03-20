@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.blog.velog.dao.PostDao">
+
+  <select id="getAllPosts" resultType="Post" >
+    select * from post
+  </select>
+  
+  <select id="getPostDetail" parameterType="Long"  >
+    SELECT * FROM post WHERE id = #{id}
+  </select>
+  
+  <insert id="insertPost" parameterType="Post">
+  	insert into post(title,content,username,tags,image_url) values(#{title}, #{content}, #{username},#{tags},#{imageUrl})
+  </insert>
+  
+  <update id = "updatePost" parameterType="Post">
+  	update post set title = #{title}, tags = #{tags} , content=#{content}, image_url = #{imageUrl} where id = #{id}
+  </update>
+  
+  <delete id="deletePost" parameterType="Long">
+  	 delete from post where id = #{id}
+  </delete>
+  
+  <update id = "increaseLike" parameterType="Long">
+  	update post set likes = likes +1 where id = #{id}
+  </update>
+  
+  <update id = "decreaseLike" parameterType="Long">
+  	update post set likes = likes -1 where id = #{id}
+  </update>
+  
+  <update id="syncProfileImages">
+    UPDATE post p
+    JOIN member m ON p.username = m.username
+    SET p.profile_image = m.profile_image
+</update>
+  
+  
+</mapper>
