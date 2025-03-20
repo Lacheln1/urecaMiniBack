@@ -1,6 +1,7 @@
 package com.blog.velog.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -119,7 +120,11 @@ public class PostService {
         postDao.syncProfileImages();
     }
     
+//    게시글 이미지 업로드
+    public String updatePostImage(String username, String imageUrl) {
+    	postDao.updatePostImage(username, imageUrl);
+    	return "게시글 이미지 업데이트";
+    }
     
-	
 	
 }	

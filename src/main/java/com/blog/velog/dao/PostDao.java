@@ -31,6 +31,8 @@ public interface PostDao {
     void updateProfileImage(Post post);
     
     void syncProfileImages() throws Exception;
+    
+    int updatePostImage(@Param("username") String username, @Param("imageUrl") String imageUrl);
 	
 	
 }

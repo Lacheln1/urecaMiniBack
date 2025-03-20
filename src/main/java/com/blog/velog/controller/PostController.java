@@ -1,5 +1,10 @@
 package com.blog.velog.controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -15,13 +20,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.blog.velog.dto.Member;
 import com.blog.velog.dto.Post;
 import com.blog.velog.service.MemberService;
 import com.blog.velog.service.PostService;
+import com.blog.velog.util.JwtUtil;
+
+import jakarta.validation.Valid;
 
 @RestController
 @CrossOrigin("http://127.0.0.1:5500/")
@@ -58,7 +67,7 @@ public class PostController {
 	}
 	
 	@PostMapping("insertPost")
-	public String insertPost(@RequestBody Post p) {
+	public String insertPost(@Valid @RequestBody Post p) {
 		System.out.println(p);
 		try {
 			postService.insertPost(p);
@@ -71,7 +80,7 @@ public class PostController {
 	
 	
 	@PutMapping("updatePost/{id}")
-	public String updatePost(@PathVariable Long id, @RequestBody Post p) {
+	public String updatePost(@Valid @PathVariable Long id, @RequestBody Post p) {
 		System.out.println(p);
 		try {
 			postService.updatePost(id, p);
@@ -122,7 +131,7 @@ public class PostController {
 	}
 	
 	@PutMapping("updateProfileImage/{username}")
-	public String updateProfileImage(@PathVariable String username, @RequestBody Post p) {
+	public String updateProfileImage(@Valid @PathVariable String username, @RequestBody Post p) {
 		System.out.println(p);
 		try {
 			postService.updateProfileImage(username, p);
@@ -138,11 +147,10 @@ public class PostController {
 	    public ResponseEntity<String> syncProfileImages() {
 	        try {
 	            postService.syncProfileImages();
-	            return ResponseEntity.ok("Profile images synchronized successfully.");
+	            return ResponseEntity.ok("프로필 테이블 동기화 성공");
 	        } catch (Exception e) {
 	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error synchronizing profile images.");
 	        }
-	
-
 	 }
+	 
 }
