@@ -18,11 +18,18 @@
         SELECT * FROM member WHERE email = #{email}
     </select>
     
-  	<update id="updateMember" parameterType="map">
+  	<update id="updateSocialInfo" parameterType="map">
     	UPDATE member SET github = #{github}, twitter = #{twitter}, website = #{website}
     	WHERE email = #{email}
 	</update>
 
+
+	<update id="updateProfileInfo">
+    	UPDATE member 
+    	SET username = COALESCE(#{username}, username),
+        bio = COALESCE(#{bio}, bio)
+    	WHERE email = #{email};
+	</update>
 
 	<update id="updateEmail">
     UPDATE member	SET email = #{newEmail}	WHERE email = #{email}
@@ -43,5 +50,7 @@
 	<update id="updateProfileImage">
     	UPDATE member SET profile_image = #{profileImage} WHERE email = #{email}
 	</update>
+	
+	
 
 </mapper>

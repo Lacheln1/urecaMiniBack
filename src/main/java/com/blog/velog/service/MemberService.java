@@ -66,6 +66,15 @@ public class MemberService {
         return memberDao.getMemberByEmail(email);
     }
     
+    @Transactional
+    public void updateProfileInfo(String email, String username, String bio) {
+        if (email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("이메일이 필요합니다.");
+        }
+
+        memberDao.updateProfileInfo(email, username, bio);
+    }
+    
     
 
     // 로그인 -> 비밀번호 검증 -> JWT 발급 -> 로그인 정보 저장
@@ -187,7 +196,7 @@ public class MemberService {
             throw new IllegalArgumentException("이메일이 필요합니다.");
         }
 
-        memberDao.updateMember(email, github, twitter, website);
+        memberDao.updateSocialInfo(email, github, twitter, website);
     }
 
 
@@ -197,6 +206,7 @@ public class MemberService {
     
     public boolean verifyPassword(String email, String currentPassword) {
         Optional<Member> optionalMember = memberDao.getMemberByEmail(email);
+        
         if (optionalMember.isEmpty()) {
             return false; // 사용자가 존재하지 않음
         }
@@ -243,6 +253,9 @@ public class MemberService {
     public String changePassword(String email, String currentPassword, String newPassword) {
         // 이메일로 회원 정보 조회
         Optional<Member> optionalMember = memberDao.getMemberByEmail(email);
+        System.out.println("원본 비밀번호: " + newPassword);
+        
+        
         if (optionalMember.isEmpty()) {
             return "회원 정보를 찾을 수 없습니다.";
         }
@@ -258,6 +271,9 @@ public class MemberService {
         // 새로운 솔트 생성 및 비밀번호 암호화
         String newSalt = generateSalt();
         String hashedNewPassword = hashPassword(newPassword, newSalt);
+        
+
+        System.out.println("DB에 저장된 해싱된 비밀번호: " + hashedNewPassword);
 
         // 업데이트 실행
         memberDao.updatePassword(email, hashedNewPassword);

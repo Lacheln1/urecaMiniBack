@@ -114,8 +114,23 @@ public class MemberController {
     }
 
 
+    
+    @PutMapping("/update-profile")
+    public ResponseEntity<?> updateProfileInfo(@RequestBody Map<String, String> requestData) {
+        String email = requestData.get("email");
+        String username = requestData.get("username");
+        String bio = requestData.get("bio");
 
-    @PutMapping("/update")
+        if (email == null || email.isEmpty()) {
+            return ResponseEntity.badRequest().body("이메일이 필요합니다.");
+        }
+
+        memberService.updateProfileInfo(email, username, bio);
+        return ResponseEntity.ok("프로필 정보가 성공적으로 업데이트되었습니다.");
+    }
+    
+
+    @PutMapping("/updateSocialInfo")
     public ResponseEntity<?> updateSocialInfo(@RequestBody Map<String, String> requestData) {
         String email = requestData.get("email");
         String github = requestData.getOrDefault("github", "");
@@ -125,10 +140,7 @@ public class MemberController {
         memberService.updateSocialInfo(email, github, twitter, website);
         return ResponseEntity.ok("소셜 정보가 성공적으로 업데이트되었습니다.");
     }
-    
-    
-    
-    
+
     @PostMapping("/verify-password")
     public ResponseEntity<String> verifyPassword(@RequestHeader("Authorization") String token, @RequestBody Map<String, String> request) {
         String email = jwtUtil.extractEmail(token.substring(7));
