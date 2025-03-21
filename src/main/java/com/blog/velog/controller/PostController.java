@@ -67,7 +67,7 @@ public class PostController {
 	}
 	
 	@PostMapping("insertPost")
-	public String insertPost(@Valid @RequestBody Post p) {
+	public String insertPost(@RequestBody Post p) {
 		System.out.println(p);
 		try {
 			postService.insertPost(p);
